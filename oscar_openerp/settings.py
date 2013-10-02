@@ -146,6 +146,7 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
     'south',
     'compressor',
+    'oscar_openerp.openerp',
 ] + get_core_apps()
 
 # A sample logging configuration. The only tangible logging
@@ -219,3 +220,9 @@ OSCAR_ORDER_STATUS_PIPELINE = {
     'Being processed': ('Processed', 'Cancelled',),
     'Cancelled': (),
 }
+
+OSCAR_ERP_SERVER = 'http://localhost:8069'
+OSCAR_ERP_DATABASE = 'openerp'
+OSCAR_ERP_USERNAME = 'admin'
+OSCAR_ERP_PASSWORD = 'admin'
+
