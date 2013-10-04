@@ -1,20 +1,9 @@
 from django.core.management.base import NoArgsCommand, make_option
 import erppeek
-import os
-import sys
-#from os.environ.setdefault("DJANGO_SETTINGS_MODULE", "esale.settings")
 
 from oscar_openerp import settings
-from django.db import models
-from oscar.apps.catalogue.models import ProductClass
 from oscar_openerp.openerp import mapping 
 import oscar
-
-def distinct(seq):
-    seen = set()
-    seen_add = seen.add
-    return [ x for x in seq if x not in seen and not seen_add(x)]
-
 
 def distinct_dict(seq):
     seen = set()
@@ -26,6 +15,14 @@ def distinct_dict(seq):
             new_seq.append(d)
     return new_seq
 
+def get_oe_mod_val(client, mod_name, fields):
+    mod_val = client.read(mod_name,[],fields)
+    if 'id' not in fields:
+        for dict in mod_val:
+            del dict['id']
+        mod_val = distinct_dict(mod_val)
+    return mod_val
+    
 
 class Command(NoArgsCommand):
 
@@ -36,24 +33,15 @@ class Command(NoArgsCommand):
     )
 
     def handle_noargs(self, **options):
-        cate = models.get_model('catalogue', 'Category')
         Client = erppeek.Client(
             settings.OSCAR_ERP_SERVER,
             db=settings.OSCAR_ERP_DATABASE,
             user=settings.OSCAR_ERP_USERNAME,
             password=settings.OSCAR_ERP_PASSWORD
             )
-        oecate = Client.read("product.template",[],'type')
-        oecate = distinct(oecate)
-        for i in range(0, len(oecate)):
-            productclass = ProductClass(id=i,name=oecate[i],slug=oecate[i])
-            productclass.save()
-        for oe_mod_name in mapping.mapping:   
-            oe_mod_val = Client.read(oe_mod_name,[],mapping.mapping[oe_mod_name][1].keys())
-            if 'id' not in mapping.mapping[oe_mod_name][1].keys():
-                for dict in oe_mod_val:
-                    del dict['id']
-                oe_mod_val = distinct_dict(oe_mod_val)
+        for oe_mod_name in mapping.mapping:
+            oe_mod_fieds = mapping.mapping[oe_mod_name][1].keys()
+            oe_mod_val = get_oe_mod_val(Client, oe_mod_name, oe_mod_fieds)
             oscar_mod = eval(mapping.mapping[oe_mod_name][0])
             for i in range(0, len(oe_mod_val)):
                 oscar_mod_obj = oscar_mod(id = i)
@@ -61,7 +49,6 @@ class Command(NoArgsCommand):
                     oeattr=oe_mod_val[i][oe_field]
                     for attr in mapping.mapping[oe_mod_name][1][oe_field]:
                         setattr(oscar_mod_obj, attr, oeattr)
-                #import ipdb; ipdb.set_trace()
                 oscar_mod_obj.save()
         
         
