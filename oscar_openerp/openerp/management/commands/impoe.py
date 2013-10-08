@@ -39,9 +39,11 @@ class Command(NoArgsCommand):
             user=settings.OSCAR_ERP_USERNAME,
             password=settings.OSCAR_ERP_PASSWORD
             )
+        import ipdb; ipdb.set_trace()
         for oe_mod_name in mapping.mapping:
             oe_mod_fieds = mapping.mapping[oe_mod_name][1].keys()
             oe_mod_val = get_oe_mod_val(Client, oe_mod_name, oe_mod_fieds)
+            import ipdb; ipdb.set_trace()
             oscar_mod = eval(mapping.mapping[oe_mod_name][0])
             for i in range(0, len(oe_mod_val)):
                 oscar_mod_obj = oscar_mod(id = i)
@@ -50,7 +52,6 @@ class Command(NoArgsCommand):
                     for attr in mapping.mapping[oe_mod_name][1][oe_field]:
                         setattr(oscar_mod_obj, attr, oeattr)
                 oscar_mod_obj.save()
-        
         
 
 
