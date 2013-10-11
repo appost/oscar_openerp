@@ -78,14 +78,11 @@ def imp_res_partner(client):
             
 def imp_product_product(client):
     oe_mod_name = 'product.product'
-    ########################################42#
-    #mod_val = client.read(oe_mod_name,[])
-    #get_index(mod_val, 'name', 'name_product')
-    #########################################
-    oe_mod_fieds = ['id', 'name','code','type','description','categ_id']
+    oe_mod_fieds = ['id', 'name','code','type','description','categ_id','image']
     oe_mod_val = get_oe_mod_val(client, oe_mod_name, oe_mod_fieds)
-    #oscar_mod = oscar.apps.catalogue.models.Product
     oscar_mod = get_model('catalogue', 'product')
+    import ipdb; ipdb.set_trace()
+    oscar_mod = get_model('catalogue', 'productimage')
     for i in sort_ids(oe_mod_val):
         oscar_mod_obj = oscar_mod(id = i)
         oe_mod_val_cur = oe_val_by_id(oe_mod_val, i)
@@ -98,11 +95,10 @@ def imp_product_product(client):
         category = oscar.apps.catalogue.models.Category.objects.get(id=oe_mod_val_cur['categ_id'][0])
         productcategory = oscar.apps.catalogue.models.ProductCategory.objects.get_or_create(category = category, product = oscar_mod_obj)[0]
         oscar_mod_obj.productcategory_set.add(productcategory)
-        #import ipdb; ipdb.set_trace()
         oscar_mod_obj.date_created = datetime.now()
         oscar_mod_obj.save()
 
-
+'''
 def imp_product_product(client):
     oe_mod_name = 'product.product'
     ########################################42#
@@ -128,4 +124,4 @@ def imp_product_product(client):
         #import ipdb; ipdb.set_trace()
         oscar_mod_obj.date_created = datetime.now()
         oscar_mod_obj.save()
-
+'''
