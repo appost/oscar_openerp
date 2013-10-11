@@ -1,6 +1,9 @@
 import oscar
+from datetime import datetime
 from oscar.core.utils import slugify
 from oscar.apps.dashboard.catalogue.forms import CategoryForm
+from django.db.models import get_model
+
 
 def distinct_dict(seq):
     seen = set()
@@ -68,16 +71,61 @@ def imp_res_partner(client):
     for i in sort_ids(oe_mod_val):
         oscar_mod_obj = oscar_mod(id = i)
         oe_mod_val_cur = oe_val_by_id(oe_mod_val, i)
-        if oe_mod_val_cur['parent_id'] == False:
-            oscar.apps.catalogue.models.Category.add_root(id = i, name = oe_mod_val_cur['name'])
-        else:
-            oscar_mod_obj_prnt = oscar.apps.catalogue.models.Category.objects.get(id = oe_mod_val_cur['parent_id'][0])
-            oscar_mod_obj_prnt.add_child(id = i, name = oe_mod_val_cur['name'])
+        oscar_mod_obj.name = oe_mod_val_cur['name']
+        oscar_mod_obj.save()
     
-    import ipdb; ipdb.set_trace()
 
             
 def imp_product_product(client):
     oe_mod_name = 'product.product'
-    import ipdb; ipdb.set_trace()
+    ########################################42#
+    #mod_val = client.read(oe_mod_name,[])
+    #get_index(mod_val, 'name', 'name_product')
+    #########################################
+    oe_mod_fieds = ['id', 'name','code','type','description','categ_id']
+    oe_mod_val = get_oe_mod_val(client, oe_mod_name, oe_mod_fieds)
+    #oscar_mod = oscar.apps.catalogue.models.Product
+    oscar_mod = get_model('catalogue', 'product')
+    for i in sort_ids(oe_mod_val):
+        oscar_mod_obj = oscar_mod(id = i)
+        oe_mod_val_cur = oe_val_by_id(oe_mod_val, i)
+        oscar_mod_obj.title = oe_mod_val_cur['name']
+        if oe_mod_val_cur['code']:
+            oscar_mod_obj.upc = oe_mod_val_cur['code']
+        prodclass = oscar.apps.catalogue.models.ProductClass.objects.get(name=oe_mod_val_cur['type'])
+        oscar_mod_obj.product_class_id = prodclass.id
+        oscar_mod_obj.description = oe_mod_val_cur['description']
+        category = oscar.apps.catalogue.models.Category.objects.get(id=oe_mod_val_cur['categ_id'][0])
+        productcategory = oscar.apps.catalogue.models.ProductCategory.objects.get_or_create(category = category, product = oscar_mod_obj)[0]
+        oscar_mod_obj.productcategory_set.add(productcategory)
+        #import ipdb; ipdb.set_trace()
+        oscar_mod_obj.date_created = datetime.now()
+        oscar_mod_obj.save()
+
+
+def imp_product_product(client):
+    oe_mod_name = 'product.product'
+    ########################################42#
+    #mod_val = client.read(oe_mod_name,[])
+    #get_index(mod_val, 'name', 'name_product')
+    #########################################
+    oe_mod_fieds = ['id', 'name','code','type','description','categ_id']
+    oe_mod_val = get_oe_mod_val(client, oe_mod_name, oe_mod_fieds)
+    #oscar_mod = oscar.apps.catalogue.models.Product
+    oscar_mod = get_model('catalogue', 'product')
+    for i in sort_ids(oe_mod_val):
+        oscar_mod_obj = oscar_mod(id = i)
+        oe_mod_val_cur = oe_val_by_id(oe_mod_val, i)
+        oscar_mod_obj.title = oe_mod_val_cur['name']
+        if oe_mod_val_cur['code']:
+            oscar_mod_obj.upc = oe_mod_val_cur['code']
+        prodclass = oscar.apps.catalogue.models.ProductClass.objects.get(name=oe_mod_val_cur['type'])
+        oscar_mod_obj.product_class_id = prodclass.id
+        oscar_mod_obj.description = oe_mod_val_cur['description']
+        category = oscar.apps.catalogue.models.Category.objects.get(id=oe_mod_val_cur['categ_id'][0])
+        productcategory = oscar.apps.catalogue.models.ProductCategory.objects.get_or_create(category = category, product = oscar_mod_obj)[0]
+        oscar_mod_obj.productcategory_set.add(productcategory)
+        #import ipdb; ipdb.set_trace()
+        oscar_mod_obj.date_created = datetime.now()
+        oscar_mod_obj.save()
 
