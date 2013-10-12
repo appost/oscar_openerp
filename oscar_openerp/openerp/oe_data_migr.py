@@ -3,6 +3,7 @@ from datetime import datetime
 from oscar.core.utils import slugify
 from oscar.apps.dashboard.catalogue.forms import CategoryForm
 from django.db.models import get_model
+from django.core.files import File
 
 
 def distinct_dict(seq):
@@ -81,8 +82,7 @@ def imp_product_product(client):
     oe_mod_fieds = ['id', 'name','code','type','description','categ_id','image']
     oe_mod_val = get_oe_mod_val(client, oe_mod_name, oe_mod_fieds)
     oscar_mod = get_model('catalogue', 'product')
-    import ipdb; ipdb.set_trace()
-    oscar_mod = get_model('catalogue', 'productimage')
+    oscar_mod_img = get_model('catalogue', 'productimage')
     for i in sort_ids(oe_mod_val):
         oscar_mod_obj = oscar_mod(id = i)
         oe_mod_val_cur = oe_val_by_id(oe_mod_val, i)
@@ -97,6 +97,23 @@ def imp_product_product(client):
         oscar_mod_obj.productcategory_set.add(productcategory)
         oscar_mod_obj.date_created = datetime.now()
         oscar_mod_obj.save()
+        if oe_mod_val_cur['image'] != False:
+            oscar_mod_img_obj = oscar_mod_img()
+            #import ipdb; ipdb.set_trace()
+            try:
+                oscar_mod_img.objects.get(product_id = i, display_order = 0).delete()
+            except oscar_mod_img.DoesNotExist:
+                pass
+            oscar_mod_img_obj.product_id = i
+            oscar_mod_img_obj.display_order = i
+            #img = oscar_mod_img_obj.original.open('img.jpg')
+            img = open('img.jpg', 'w')
+            img.write(oe_mod_val_cur['image'])
+            img.close()
+            img = open('img.jpg', 'r')
+            oscar_mod_img_obj.original.save('img',File(img))
+            oscar_mod_img_obj.save()
+        
 
 '''
 def imp_product_product(client):
