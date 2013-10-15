@@ -17,8 +17,8 @@ def distinct_dict(seq):
             new_seq.append(d)
     return new_seq
 
-def get_oe_mod_val(client, mod_name, fields):
-    mod_val = client.read(mod_name,[],fields)
+def get_oe_mod_val(client, mod_name, fields, filter = []):
+    mod_val = client.read(mod_name, filter, fields)
     if 'id' not in fields:
         for dict in mod_val:
             del dict['id']
@@ -105,7 +105,7 @@ def imp_product_product(client):
             except oscar_mod_img.DoesNotExist:
                 pass
             oscar_mod_img_obj.product_id = i
-            oscar_mod_img_obj.display_order = i
+            oscar_mod_img_obj.display_order = 0
             #import ipdb; ipdb.set_trace()
             #img = oscar_mod_img_obj.original.open('img.jpg')
             img = open('img.jpg', 'w')

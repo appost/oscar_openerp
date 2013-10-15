@@ -128,6 +128,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'oscar.apps.basket.middleware.BasketMiddleware',
 )
 
 ROOT_URLCONF = 'oscar_openerp.urls'
