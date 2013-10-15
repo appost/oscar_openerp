@@ -18,7 +18,25 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     (r'', include(application.urls)),
-)+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+)#+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+#import ipdb; ipdb.set_trace()
+'''
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': settings.STATIC_ROOT,
+            'show_indexes': True,
+        }),
+    )
+'''
+'''
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+# The rest of my urls here...
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()
+'''
 
 if settings.DEBUG:
     urlpatterns += patterns('',
@@ -26,4 +44,5 @@ if settings.DEBUG:
             'document_root': settings.MEDIA_ROOT,
             'show_indexes': True,
         }),
+                            
    )

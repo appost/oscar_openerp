@@ -4,6 +4,7 @@ from oscar.core.utils import slugify
 from oscar.apps.dashboard.catalogue.forms import CategoryForm
 from django.db.models import get_model
 from django.core.files import File
+import base64
 
 
 def distinct_dict(seq):
@@ -99,16 +100,16 @@ def imp_product_product(client):
         oscar_mod_obj.save()
         if oe_mod_val_cur['image'] != False:
             oscar_mod_img_obj = oscar_mod_img()
-            #import ipdb; ipdb.set_trace()
             try:
                 oscar_mod_img.objects.get(product_id = i, display_order = 0).delete()
             except oscar_mod_img.DoesNotExist:
                 pass
             oscar_mod_img_obj.product_id = i
             oscar_mod_img_obj.display_order = i
+            #import ipdb; ipdb.set_trace()
             #img = oscar_mod_img_obj.original.open('img.jpg')
             img = open('img.jpg', 'w')
-            img.write(oe_mod_val_cur['image'])
+            img.write(base64.b64decode(oe_mod_val_cur['image']))
             img.close()
             img = open('img.jpg', 'r')
             oscar_mod_img_obj.original.save('img',File(img))

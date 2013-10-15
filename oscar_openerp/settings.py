@@ -3,6 +3,10 @@ import os
 from oscar import OSCAR_MAIN_TEMPLATE_DIR, get_core_apps
 from oscar.defaults import *
 
+PROJECT_DIR = os.path.dirname(__file__)
+location = lambda x: os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), x)
+
 
 # Django settings for oscar_openerp project.
 
@@ -80,7 +84,7 @@ USE_TZ = True
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = location("public/statico")
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -91,6 +95,9 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    #location("public/media"),
+    "/home/gigi/workspace/lavori/oscar/oscar_openerp/oscar_openerp/public/static/",
+    
 )
 
 # List of finder classes that know how to find static files in
@@ -201,9 +208,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-PROJECT_DIR = os.path.dirname(__file__)
-location = lambda x: os.path.join(
-    os.path.dirname(os.path.realpath(__file__)), x)
 MEDIA_ROOT = location("public/media")
 MEDIA_URL = '/media/'
 
