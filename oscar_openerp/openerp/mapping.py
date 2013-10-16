@@ -1,4 +1,16 @@
 import oe_data_migr
+
+mapping_oscar = {
+           'category' : {
+                         'id' : 'id',
+                         'name' : 'name'                         
+                         }
+           
+           }
+    boh = all_to_dict(oscar_mod.objects.all())
+
+
+'''
 mapping = {
            'product.template' : [
                                  'oscar.apps.catalogue.models.ProductClass', \
@@ -13,3 +25,5 @@ mapping = {
                                           }           
                                  ],
            }
+           
+'''

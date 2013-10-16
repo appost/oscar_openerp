@@ -25,7 +25,7 @@ class Command(NoArgsCommand):
             )
         oe_data_migr.imp_product_template(Client)
         oe_data_migr.imp_product_category(Client)
-        oe_data_migr.imp_res_partner(Client)
+        oe_data_migr.imp_res_partner_sup(Client)
         oe_data_migr.imp_product_product(Client)
         
 
